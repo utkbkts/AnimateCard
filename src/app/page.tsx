@@ -1,113 +1,92 @@
-import Image from 'next/image'
+"use client";
+import { fetcAnime } from "@/action";
+import React, { useEffect, useState } from "react";
+import { AnimeProp } from "../../type";
+import LoadMore from "@/Loadmore";
+import { motion } from "framer-motion";
+interface Prop {
+  anime: AnimeProp;
+  index: number;
+}
+const variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+const Home = ({ anime }: Prop) => {
+  const [animeData, setAnimeData] = useState<AnimeProp[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await fetcAnime(1);
+        setAnimeData(result);
+      } catch (error) {
+        console.error("Error fetching anime data:", error);
+      }
+    };
 
-export default function Home() {
+    fetchData();
+  }, []);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <>
+      <header className=" h-32 w-full border-b border-b-gray-500 flex items-center justify-between ">
+        <div className="flex items-center justify-between w-full max-w-screen-lg mx-auto">
+          <div>
+            <h1>LOGO</h1>
+          </div>
+          <ul className="flex items-center gap-2">
+            <li>Home</li>
+            <li>About</li>
+            <li>Contact</li>
+            <li>Project</li>
+          </ul>
+        </div>
+      </header>
+      <div className="flex justify-center items-center max-w-screen-lg mx-auto border-b-white border-b">
+        <div className="flex-1 font-semibold  h-screen justify-center flex flex-col">
+          <h1 className="text-6xl font-serif">Lorem, ipsum.</h1>
+          <span className="text-red-500 text-4xl">
+            Lorem ipsum dolor sit amet.
+          </span>
+          <span className="text-3xl">Lorem, ipsum dolor.</span>
+        </div>
+        <div className="flex-1">
+          <img
+            className="rounded-full"
+            src="https://img.freepik.com/free-vector/japanese-samurai-warrior-vector-illustration_43623-953.jpg?w=740&t=st=1700945341~exp=1700945941~hmac=b1ad20e79b7d7b7ac3114851b95bf4e4ac2d4b89573aaf52e965fada7a6ef21c"
+            alt=""
+          />
         </div>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      <div className="max-w-screen-lg mx-auto mt-10">
+        <div className="grid-cols-4 grid gap-4">
+          {animeData.map((item: AnimeProp, index: number) => (
+            <motion.div
+              variants={variants}
+              initial="hidden"
+              animate="visible"
+              transition={{ delay: index * 0.25, ease: "easeInOut", duration: 0.5 }}
+              viewport={{ amount: 0 }}
+              key={item.id}
+            >
+              <div>
+                <img
+                  className="h-[300px] w-full"
+                  src={`https://shikimori.one${item.image.original}`}
+                  alt={item.name}
+                />
+              </div>
+              <div className="flex items-center justify-between p-2">
+                <span>{item.name}</span>
+                <span>{item.kind}</span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+        <LoadMore />
       </div>
+    </>
+  );
+};
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+export default Home;
